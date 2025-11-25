@@ -1,0 +1,52 @@
+services:
+  artemis:
+    image: apache/activemq-artemis:latest
+    container_name: artemis-mock
+    ports:
+      - "61616:61616"  # STOMP
+      - "8161:8161"    # Web Console
+    environment:
+      - ARTEMIS_USER=${ARTEMIS_USER}
+      - ARTEMIS_PASSWORD=${ARTEMIS_PASSWORD}
+    networks:
+      - artemis-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8161/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  listener:
+    build: listener
+    container_name: artemis-listener
+    depends_on:
+      artemis:
+        condition: service_healthy
+    environment:
+      - ARTEMIS_HOST=${ARTEMIS_HOST}
+      - ARTEMIS_PORT=${ARTEMIS_PORT}
+      - ARTEMIS_USER=${ARTEMIS_USER}
+      - ARTEMIS_PASSWORD=${ARTEMIS_PASSWORD}
+      - REQUEST_QUEUE=${REQUEST_QUEUE}
+      - RESPONSE_QUEUE=${RESPONSE_QUEUE}
+    volumes:
+      - ./templates:/app/templates:ro
+      - ./answers:/app/answers
+    networks:
+      - artemis-network
+    restart: unless-stopped
+
+  tester:
+    build: tester
+    container_name: artemis-tester
+    environment:
+      - ARTEMIS_HOST=${ARTEMIS_HOST}
+      - ARTEMIS_PORT=${ARTEMIS_PORT}
+      - ARTEMIS_USER=${ARTEMIS_USER}
+      - ARTEMIS_PASSWORD=${ARTEMIS_PASSWORD}
+    networks:
+      - artemis-network
+
+networks:
+  artemis-network:
+    driver: bridge

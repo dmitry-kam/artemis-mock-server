@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <operation>getBalance</operation>
+    <status>success</status>
+    <balance>
+        <accountId>67890</accountId>
+        <amount>1500.50</amount>
+        <currency>USD</currency>
+    </balance>
+</response>

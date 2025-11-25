@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <operation>getUserInfo</operation>
+    <status>success</status>
+    <user>
+        <id>12345</id>
+        <name>John Doe</name>
+        <email>john.doe@example.com</email>
+    </user>
+</response>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<request>
+    <operation>getBalance</operation>
+    <accountId>67890</accountId>
+</request>

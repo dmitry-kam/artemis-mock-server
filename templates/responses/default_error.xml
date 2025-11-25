@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<error>
+    <code>404</code>
+    <message>Request template not found</message>
+    <description>The received request does not match any known template</description>
+</error>
