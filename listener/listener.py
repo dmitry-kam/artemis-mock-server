@@ -84,10 +84,10 @@ class MessageListener(stomp.ConnectionListener):
                 destination=f'/queue/{self.response_queue}',
                 body=response,
                 headers={
-                                'content-type': 'application/xml',
-                                'persistent': 'true',
-                                'destination-type': 'ANYCAST'
-                            }
+                    'content-type': 'application/xml',
+                    'persistent': 'true',
+                    'destination-type': 'ANYCAST'
+                }
             )
 
             file_answers_dir = Path('/app/answers')
@@ -112,6 +112,22 @@ class MessageListener(stomp.ConnectionListener):
     def on_disconnected(self):
         logger.warning("Disconnected from Artemis")
 
+def ensure_queue_exists(conn, queue_name):
+    try:
+        conn.send(
+            destination=f'/queue/{queue_name}',
+            body='',
+            headers={
+                'content-type': 'text/plain',
+                'destination-type': 'ANYCAST',
+                'persistent': 'false',
+                'expires': '1000'
+            }
+        )
+        logger.info(f"Queue {queue_name} created/verified")
+    except Exception as e:
+        logger.warning(f"Queue creation warning: {e}")
+
 def main():
     host = os.getenv('ARTEMIS_HOST', 'artemis')
     port = int(os.getenv('ARTEMIS_PORT', '61616'))
@@ -133,16 +149,15 @@ def main():
             conn.connect(user, password, wait=True)
 
             logger.info("Connected to Artemis")
+
+            ensure_queue_exists(conn, request_queue)
+            ensure_queue_exists(conn, response_queue)
+            time.sleep(1)
             logger.info(f"Listening to the queue: {request_queue}")
 
-            conn.send(destination='/queue/request.queue',
-                              body="""<?xml version="1.0" encoding="UTF-8"?>
-                                   <request>
-                                       <operation>Test</operation>
-                                   </request>""",
-                              headers={'content-type': 'application/xml', 'destination-type': 'ANYCAST'})
-
             conn.subscribe(destination=f'/queue/{request_queue}', id=1, ack='auto')
+
+            logger.info("Service started successfully. Waiting for messages...")
 
             while conn.is_connected():
                 time.sleep(1)
