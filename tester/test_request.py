@@ -21,7 +21,7 @@ def send_test_requests():
 
         conn.send(destination='/queue/request.queue',
                   body=request1,
-                  headers={'content-type': 'application/xml'})
+                  headers={'content-type': 'application/xml', 'destination-type': 'ANYCAST'})
         print("Request 1 (getUserInfo) has been sent!")
 
         time.sleep(1)
@@ -35,7 +35,7 @@ def send_test_requests():
 
         conn.send(destination='/queue/request.queue',
                   body=request2,
-                  headers={'content-type': 'application/xml'})
+                  headers={'content-type': 'application/xml', 'destination-type': 'ANYCAST'})
         print("Request 2 (getBalance) has been sent!")
 
         time.sleep(1)
@@ -48,7 +48,7 @@ def send_test_requests():
 
         conn.send(destination='/queue/request.queue',
                   body=request3,
-                  headers={'content-type': 'application/xml'})
+                  headers={'content-type': 'application/xml', 'destination-type': 'ANYCAST'})
         print("Request 3 (unknownOperation) has been sent!")
 
         print("\nCheck answers at Web Console: http://localhost:8161")

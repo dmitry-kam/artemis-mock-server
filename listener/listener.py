@@ -135,7 +135,14 @@ def main():
             logger.info("Connected to Artemis")
             logger.info(f"Listening to the queue: {request_queue}")
 
-            conn.subscribe(destination=f'/queue/{request_queue}', id=1, ack='auto', headers={'destination-type': 'ANYCAST'})
+            conn.send(destination='/queue/request.queue',
+                              body="""<?xml version="1.0" encoding="UTF-8"?>
+                                   <request>
+                                       <operation>Test</operation>
+                                   </request>""",
+                              headers={'content-type': 'application/xml', 'destination-type': 'ANYCAST'})
+
+            conn.subscribe(destination=f'/queue/{request_queue}', id=1, ack='auto')
 
             while conn.is_connected():
                 time.sleep(1)

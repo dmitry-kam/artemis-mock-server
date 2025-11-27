@@ -9,6 +9,9 @@ start:
 stop:
 	docker-compose down
 
+stop-listener:
+	docker-compose stop listener
+
 remove:
 	docker-compose kill
 	docker-compose rm -v --force
